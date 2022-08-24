@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:latest
+    container_name: {{PROYECT_NAME}}_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: {{MYSQL_ROOT_PASSWORD}}
+      MYSQL_DATABASE: {{PROYECT_NAME}}_db
+      MYSQL_USER: {{MYSQL_USER}}
+      MYSQL_PASSWORD: {{MYSQL_PASSWORD}}
+    
+  wordpress:
+    image: wordpress:latest
+    container_name: {{PROYECT_NAME}}_wp
+    volumes:
+      - /var/proyects/wordpress/{{PROYECT_NAME}}:/var/www/html
+    ports:
+      - "3080:80"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.{{PROYECT_NAME}}.entrypoints=websecure"
+      - "traefik.http.routers.{{PROYECT_NAME}}.rule=Host(`{{PROYECT_NAME}}.dev.agusmoura.com.ar`)"
+      - "traefik.http.routers.{{PROYECT_NAME}}.tls.certresolver=myresolver"
+      - "traefik.http.services.{{PROYECT_NAME}}.loadbalancer.server.port=80"
+    restart: always
+
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: {{MYSQL_USER}}
+      WORDPRESS_DB_PASSWORD: {{MYSQL_PASSWORD}}
+      WORDPRESS_DB_NAME: {{PROYECT_NAME}}_db
+
+networks:
+  default:
+    name: proxy-network
+    external: true
+    
+volumes:
+  {{PROYECT_NAME}}: {}
