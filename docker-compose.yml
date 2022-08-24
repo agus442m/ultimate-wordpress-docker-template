@@ -19,7 +19,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.{{PROYECT_NAME}}.entrypoints=websecure"
-      - "traefik.http.routers.{{PROYECT_NAME}}.rule=Host(`{{PROYECT_NAME}}.dev.agusmoura.com.ar`)"
+      - "traefik.http.routers.{{PROYECT_NAME}}.rule=Host(`{{PROYECT_NAME}}.{{HOST}}`)"
       - "traefik.http.routers.{{PROYECT_NAME}}.tls.certresolver=myresolver"
       - "traefik.http.services.{{PROYECT_NAME}}.loadbalancer.server.port=80"
     restart: always
@@ -32,7 +32,7 @@ services:
 
 networks:
   default:
-    name: proxy-network
+    name: {{PROXY_NETWORK}}
     external: true
     
 volumes:
